@@ -1,6 +1,6 @@
 import React from 'react'
 
-import VideoPlayer from 'atoms/video-player'
+import VideoPlayer from 'components/video-player'
 
 const HomePage = () => {
   return (
