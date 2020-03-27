@@ -1,6 +1,7 @@
 const dev = process.env.NODE_ENV === 'development'
 
 module.exports = {
+  streamKey: process.env.MINNE_STREAM_KEY || 'poopy',
   nms: {
     rtmp: {
       port: 1935,
