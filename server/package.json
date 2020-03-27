@@ -1,0 +1,16 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Server for live.minnecrapol.is",
+  "private": true,
+  "scripts": {
+    "dev": "NODE_ENV=development nodemon ./src/index.js",
+    "start": "node ./src/index.js"
+  },
+  "dependencies": {
+    "node-media-server": "^2.1.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
