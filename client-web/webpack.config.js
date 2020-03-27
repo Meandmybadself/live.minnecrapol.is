@@ -21,7 +21,7 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      STREAM_URL: JSON.stringify('http://localhost:8420/live/poopy/index.m3u8')
+      STREAM_URL: JSON.stringify(process.env.MINNE_STREAM_URL || 'http://localhost:8420/live/poopy/index.m3u8')
     }),
     new HtmlWebPackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),
