@@ -6,7 +6,7 @@ const router = express.Router()
 
 router.post('/slack', async (req, res, next) => {
   try {
-    const data = await AuthController.signInWithSlack(req.body.code)
+    const data = await AuthController.signInWithSlack(req.body.code, req.body.redirect_uri)
 
     return res.json(data)
   } catch (error) {

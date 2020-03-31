@@ -27,7 +27,8 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      API_HOST: JSON.stringify(process.env.MINNE_LIVE_API_HOST)
+      API_HOST: JSON.stringify(process.env.MINNE_LIVE_API_HOST),
+      SLACK_REDIRECT: JSON.stringify(process.env.MINNE_LIVE_SLACK_REDIRECT)
     }),
     new HtmlWebPackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),

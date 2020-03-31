@@ -15,7 +15,7 @@ const AuthProvider = ({ children }) => {
       const signInResponse = await axios.request({
         url: `${API_HOST}/api/auth/slack`,
         method: 'post',
-        data: { code }
+        data: { code, redirect_uri: `${SLACK_REDIRECT}` }
       })
 
       const { user, token } = signInResponse.data
