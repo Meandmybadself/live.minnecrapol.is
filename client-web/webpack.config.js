@@ -27,7 +27,6 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      STREAM_URL: JSON.stringify(process.env.MINNE_LIVE_STREAM_URL),
       API_HOST: JSON.stringify(process.env.MINNE_LIVE_API_HOST)
     }),
     new HtmlWebPackPlugin({
