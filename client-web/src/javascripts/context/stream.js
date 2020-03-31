@@ -51,10 +51,10 @@ const StreamProvider = ({ children }) => {
   }
 
   useEffect(() => {
+    getStreamData(true)
+    
     let handle
     if (polling) {
-      getStreamData(true)
-
       handle = window.setInterval(() => {
         getStreamData(true)
       }, 5000)
