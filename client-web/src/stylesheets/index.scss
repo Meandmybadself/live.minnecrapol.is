@@ -5,6 +5,9 @@
 
 $dark: #111111;
 $light: #eeeeee;
+$headerHeight: 80px;
+$videoPlayerMaxWidthPercent: 85;
+$videoPlayerMaxHeightPercent: 70;
 
 html, body {
   position: relative;
@@ -16,8 +19,8 @@ html, body {
   max-height: 100%;
   width: 100%;
   height: 100%;
-  background-color: $dark;
-  color: $light;
+  background-color: $light;
+  color: $dark;
   font-family: 'Rubik', sans-serif;
   box-sizing: border-box;
 }
@@ -46,7 +49,7 @@ a {
     left: -2px;
     height: 2px;
     opacity: 0;
-    background-color: $light;
+    background-color: $dark;
     transform: translateY(5px);
 
     transition: all 0.25s ease-out;
@@ -80,11 +83,36 @@ a {
   background-color: $dark;
   color: $light;
 
+  &.dark {
+    background-color: $dark;
+    color: $light;
+
+    a::after { background-color: $light; }
+
+    .video-player-container {
+      background-color: $dark;
+      box-shadow: 0px 0px 12px 4px rgba(200, 200, 200, 0.15);
+
+      .video-player-overlay {
+        background-color: $dark;
+      }
+    }
+  }
+
   &.light {
     background-color: $light;
     color: $dark;
 
     a::after { background-color: $dark; }
+
+    .video-player-container {
+      background-color: $light;
+      box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, 0.25);
+
+      .video-player-overlay {
+        background-color: $light;
+      }
+    }
   }
 
   transition: all 0.25s linear;
@@ -97,7 +125,7 @@ header {
   top: 0;
   right: 0;
   left: 0;
-  height: 80px;
+  height: $headerHeight;
   padding: 10px 20px;
   align-items: center;
   z-index: 9999;
@@ -128,25 +156,6 @@ header {
   }
 }
 
-div[data-vjs-player="true"] {
-  position: relative;
-  width: 100%;
-  height: 0px;
-  padding-top: 56.25%;
-  border-radius: 10px;
-  overflow: hidden;
-  background-color: $dark;
-  box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.5);
-
-    transition: box-shadow 0.25s linear;
-
-  video {
-    @extend .absolute-fill;
-    width: 100%;
-    height: 100%;
-  }
-}
-
 .loading-page, .sign-in-page, .not-found-page {
   display: flex;
   align-items: center;
@@ -174,7 +183,46 @@ div[data-vjs-player="true"] {
   justify-content: center;
 }
 
+.video-player-container {
+  position: relative;
+  width: #{$videoPlayerMaxWidthPercent}vw;
+  height: #{(9/16) * $videoPlayerMaxWidthPercent}vw;
+  max-height: #{$videoPlayerMaxHeightPercent}vh;
+  max-width: #{(16/9) * $videoPlayerMaxHeightPercent}vh;
+  border-radius: 2%/4%;
+  background-color: $light;
+  box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
 
+  transition: all 0.25s linear;
+  transition-property: background-color, box-shadow;
+
+  .video-player {
+    @extend .absolute-fill;
+
+    & > div {
+      width: 100%;
+      height: 100%;
+    }
+
+    .video-js {
+      width: 100%;
+      height: 100%;
+
+      .vjs-error-display { display: none; }
+    }
+  }
+
+  .video-player-overlay {
+    @extend .absolute-fill;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: $light;
+
+    transition: background-color 0.25s linear;
+  }
+}
 
 .lds-ring {
   display: inline-block;

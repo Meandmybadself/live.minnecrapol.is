@@ -30,15 +30,7 @@ exports.signInWithSlack = async (code) => {
   }
 }
 
-exports.refresh = async ({ _id }) => {
-  const user = await User.findById(_id)
-
-  if (!user) {
-    const error = new Error('User does not exist')
-
-    throw error
-  }
-
+exports.refresh = async (user) => {
   const token = jwt.sign({ _id: user._id }, process.env.MINNE_LIVE_JWT_SECRET, { expiresIn: "30d" })
 
   return {

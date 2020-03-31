@@ -1,9 +1,11 @@
 import React from 'react'
 
+import VideoPlayer from 'components/video-player'
+
 const HomeScreen = () => {
   return (
     <div className="page home-page">
-      <h1>Home Page</h1>
+      <VideoPlayer />
     </div>
   )
 }

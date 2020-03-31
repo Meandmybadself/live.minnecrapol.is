@@ -2,7 +2,7 @@ const NodeMediaServer = require('node-media-server')
 
 const config = {
   rtmp: {
-    port: 1935,
+    port: process.env.MINNE_LIVE_PUBLISH_PORT,
     chunk_size: 60000,
     gop_cache: true,
     ping: 30,
@@ -14,7 +14,7 @@ const config = {
     secret: process.env.MINNE_LIVE_AUTH_SECRET
   },
   http: {
-    port: 8420,
+    port: process.env.MINNE_LIVE_PLAY_PORT,
     allow_origin: '*',
     mediaroot: './media'
   },
@@ -32,14 +32,22 @@ const config = {
   }
 }
 
-const nms = new NodeMediaServer(config)
+module.exports = nms = new NodeMediaServer(config)
 
 nms.on('preConnect', (id, args) => console.log('preConnect'))
 nms.on('postConnect', (id, args) => console.log('postConnect'))
-nms.on('doneConnect', (id, args) => console.log('doneConnect'))
+nms.on('doneConnect', (id, args) => {
+  console.log('doneConnect')
+
+  if (nms.currentSessionId === id) {
+    nms.currentSessionId = undefined
+  }
+})
 nms.on('prePublish', (id, StreamPath, args) => {
   console.log('prePublish')
 
+  // DOES PRE PUBLISH HAPPEN EVEN IF SOMEONE IS ALREADY STREAMING?
+  // SHOULDN'T SET THIS IF SO, IT SHOULD BE THE ACTIVE STREAMER
   const session = nms.getSession(id)
 
   const parts = StreamPath.split('/')
@@ -49,6 +57,8 @@ nms.on('prePublish', (id, StreamPath, args) => {
   // check if this matches our streamKey
   if (key !== process.env.MINNE_LIVE_STREAM_KEY) {
     session.reject()
+  } else {
+    nms.currentSessionId = id
   }
 })
 nms.on('postPublish', (id, StreamPath, args) => console.log('postPublish'))
@@ -58,5 +68,3 @@ nms.on('postPlay', (id, StreamPath, args) => console.log('postPlay'))
 nms.on('donePlay', (id, StreamPath, args) => console.log('donePlay'))
 
 nms.run()
-
-module.exports = nms

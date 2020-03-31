@@ -21,12 +21,3 @@ app.use(require('./routes'))
 app.listen(process.env.MINNE_LIVE_HTTP_PORT, () => {
   console.log('HTTP server listening on port ' + process.env.MINNE_LIVE_HTTP_PORT)
 })
-
-// Example hash creation
-// const crypto = require('crypto')
-// const d = new Date('1/1/2021')
-// const t = Math.floor(d.getTime() / 1000)
-// const data = `/live/stream-${t}-${config.nms.auth.secret}`
-// const hash = crypto.createHash('md5').update(data).digest('hex')
-// const url = `/live/stream?sign=${t}-${hash}`
-// console.log(d, t, hash, url)

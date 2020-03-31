@@ -19,6 +19,7 @@ router.post('/slack', async (req, res, next) => {
 })
 
 router.use(require('../../middleware/validate-jwt'))
+router.use(require('../../middleware/validate-user'))
 
 router.post('/refresh', async (req, res, next) => {
   try {
