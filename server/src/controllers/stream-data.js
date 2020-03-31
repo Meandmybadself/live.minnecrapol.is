@@ -4,11 +4,15 @@ const StreamKey = require('../schemas/stream-key')
 const nms = require('../utilities/nms')
 
 const { MINNE_LIVE_PUBLISH_HOST, MINNE_LIVE_PUBLISH_PORT, MINNE_LIVE_PLAY_HOST,
-  MINNE_LIVE_PLAY_PORT, MINNE_LIVE_STREAM_KEY, MINNE_LIVE_AUTH_SECRET } = process.env
+  MINNE_LIVE_PLAY_PORT, MINNE_LIVE_PLAY_NEEDS_PORT, MINNE_LIVE_STREAM_KEY, MINNE_LIVE_AUTH_SECRET } = process.env
 
 const streamDataForStreamKey = (streamKey) => {
+  const playStreamUrl = !MINNE_LIVE_PLAY_NEEDS_PORT ?
+    `${MINNE_LIVE_PLAY_HOST}/live/${MINNE_LIVE_STREAM_KEY}/index.m3u8` :
+    `${MINNE_LIVE_PLAY_HOST}:${MINNE_LIVE_PLAY_PORT}/live/${MINNE_LIVE_STREAM_KEY}/index.m3u8`
+  
   return {
-    playStreamUrl: `${MINNE_LIVE_PLAY_HOST}:${MINNE_LIVE_PLAY_PORT}/live/${MINNE_LIVE_STREAM_KEY}/index.m3u8`,
+    playStreamUrl,
     publishStreamUrl: `${MINNE_LIVE_PUBLISH_HOST}:${MINNE_LIVE_PUBLISH_PORT}/live`,
     publishStreamKey: `${MINNE_LIVE_STREAM_KEY}?sign=${streamKey.sign}`,
     expires: streamKey.expires,
