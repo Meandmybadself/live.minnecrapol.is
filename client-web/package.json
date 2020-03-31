@@ -5,12 +5,17 @@
   "scripts": {
     "dev": "webpack-dev-server",
     "start": "npm run dev",
-    "build": "webpack --config ./webpack.config.js --mode production"
+    "build": "webpack --config ./webpack.config.js --mode production",
+    "build:watch": "webpack --config ./webpack.config.js --watch --mode production"
   },
   "dependencies": {
+    "axios": "^0.19.2",
+    "dotenv": "^8.2.0",
     "normalize.css": "^8.0.1",
+    "query-string": "^6.11.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-router-dom": "^5.1.2",
     "video.js": "^7.7.5"
   },
   "devDependencies": {

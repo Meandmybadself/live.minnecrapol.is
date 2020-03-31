@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const webpack = require('webpack')
 const HtmlWebPackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
@@ -7,18 +9,26 @@ module.exports = {
   entry: path.resolve(__dirname, 'src/javascripts/index.js'),
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'index.js'
+    filename: 'index.js',
+    publicPath: '/'
+  },
+  devServer: {
+    historyApiFallback: true
   },
   resolve: {
     alias: {
       components: path.resolve(__dirname, 'src/javascripts/components'),
+      screens: path.resolve(__dirname, 'src/javascripts/screens'),
+      routers: path.resolve(__dirname, 'src/javascripts/routers'),
+      context: path.resolve(__dirname, 'src/javascripts/context'),
       utilities: path.resolve(__dirname, 'src/javascripts/utilities'),
       images: path.resolve(__dirname, 'src/images'),
     }
   },
   plugins: [
     new webpack.DefinePlugin({
-      STREAM_URL: JSON.stringify(process.env.MINNE_STREAM_URL || 'http://localhost:8420/live/poopy/index.m3u8')
+      STREAM_URL: JSON.stringify(process.env.MINNE_LIVE_STREAM_URL),
+      API_HOST: JSON.stringify(process.env.MINNE_LIVE_API_HOST)
     }),
     new HtmlWebPackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),

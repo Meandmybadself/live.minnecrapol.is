@@ -1,32 +1,32 @@
-const NodeMediaServer = require('node-media-server')
+require('dotenv').config()
 
-const config = require('../config')
+const express = require('express')
+const mongoose = require('mongoose')
+const path = require('path')
 
-const nms = new NodeMediaServer(config.nms)
+// Node Media Server
+const nms = require('./utilities/nms')
 
-nms.on('preConnect', (id, args) => console.log('preConnect'))
-nms.on('postConnect', (id, args) => console.log('postConnect'))
-nms.on('doneConnect', (id, args) => console.log('doneConnect'))
-nms.on('prePublish', (id, StreamPath, args) => {
-  console.log('prePublish')
+// MongoDB
+mongoose.set('useFindAndModify', false)
+mongoose.connect(process.env.MINNE_LIVE_MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
-  const session = nms.getSession(id)
+// Express Server
+const app = express()
+app.use(require('body-parser').json())
+app.use(require('cors')())
+app.use(express.static(path.resolve(__dirname, '../../client-web/dist'), { index: false }))
 
-  const parts = StreamPath.split('/')
-  const key = parts[parts.length - 1].trim()
-
-  // Only allowing a single stream right now,
-  // check if this matches our streamKey
-  if (key !== config.streamKey) {
-    session.reject()
-  }
+app.use(require('./routes'))
+app.listen(process.env.MINNE_LIVE_HTTP_PORT, () => {
+  console.log('HTTP server listening on port ' + process.env.MINNE_LIVE_HTTP_PORT)
 })
-nms.on('postPublish', (id, StreamPath, args) => console.log('postPublish'))
-nms.on('donePublish', (id, StreamPath, args) => console.log('donePublish'))
-nms.on('prePlay', (id, StreamPath, args) => console.log('prePlay'))
-nms.on('postPlay', (id, StreamPath, args) => console.log('postPlay'))
-nms.on('donePlay', (id, StreamPath, args) => console.log('donePlay'))
 
-nms.run()
-
-// Poop colored shadow for night theme
+// Example hash creation
+// const crypto = require('crypto')
+// const d = new Date('1/1/2021')
+// const t = Math.floor(d.getTime() / 1000)
+// const data = `/live/stream-${t}-${config.nms.auth.secret}`
+// const hash = crypto.createHash('md5').update(data).digest('hex')
+// const url = `/live/stream?sign=${t}-${hash}`
+// console.log(d, t, hash, url)

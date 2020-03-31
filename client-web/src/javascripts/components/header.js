@@ -1,27 +1,28 @@
 import React from 'react'
 
+import { useAuth } from 'context/auth'
+import { useTheme } from 'context/theme'
+
 import logo from 'images/crappy-logo.png'
 
-export const Header = ({ dark, toggleTheme }) => {
-  const onHowToStreamClick = e => {
-    e.preventDefault()
-    e.stopPropagation()
-  }
+export const Header = () => {
+  const { user, signOut } = useAuth()
+  const { dark, toggleDark } = useTheme()
 
-  const onThemeToggleClick = e => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    toggleTheme()
-  }
+  const onHowToStreamClick = () => { }
 
   return (
     <header>
       <img className="logo" src={ logo } />
-      <h1>MINNECRAPOLIS LIVE</h1>
+      <h1>MINNECRAPOLIS LIVE!</h1>
 
-      <a href="#" onClick={ onHowToStreamClick }>How to Stream</a>
-      <a href="#" onClick={ onThemeToggleClick }>{ !dark ? 'Dark' : 'Light' }</a>
+      { user &&
+        <>
+          <a onClick={ onHowToStreamClick }>How to Stream</a>
+          <a onClick={ signOut }>Sign Out</a>
+        </>
+      }
+      <a onClick={ toggleDark }>{ !dark ? 'Dark' : 'Light' }</a>
     </header>
   )
 }

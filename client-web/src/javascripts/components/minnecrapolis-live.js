@@ -1,23 +1,16 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-import Header from 'components/header'
-import HomePage from 'components/home-page'
+import AuthProvider from 'context/auth'
+import ThemeProvider from 'context/theme'
 
-const MinnecrapolisLive = () => {
-  const [ dark, setDark ] = useState(true)
+import Routers from 'routers'
 
-  return (
-    <div id="app" className={ !dark && 'light' }>
-      <Header
-        dark={ dark }
-        toggleTheme={ () => setDark(!dark) }
-      />
-      
-      <div className="page-container">
-        <HomePage />
-      </div>
-    </div>
-  )
-}
+const MinnecrapolisLive = () => (
+  <ThemeProvider>
+    <AuthProvider>
+      <Routers />
+    </AuthProvider>
+  </ThemeProvider>
+)
 
 export default MinnecrapolisLive

@@ -5,9 +5,16 @@
   "private": true,
   "scripts": {
     "dev": "NODE_ENV=development nodemon ./src/index.js",
-    "start": "node ./src/index.js"
+    "start": "NODE_ENV=production node ./src/index.js"
   },
   "dependencies": {
+    "@slack/web-api": "^5.8.0",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.7",
     "node-media-server": "^2.1.6"
   },
   "devDependencies": {

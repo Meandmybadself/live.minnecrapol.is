@@ -7,7 +7,6 @@ const HomePage = () => {
     <div className="page home-page">
       <VideoPlayer
         type="application/x-mpegURL"
-        controls
         autoPlay
       >
         <source src={ STREAM_URL } type="application/x-mpegURL" />

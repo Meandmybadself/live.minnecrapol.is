@@ -8,6 +8,8 @@ const VideoPlayer = ({ children, ...props }) => {
     const player = videojs(videoRef.current, {}, () => {
       console.log('onPlayeReady')
     })
+
+    player.on('error', err => console.log('Error', error))
     
     return () => {
       
