@@ -5,6 +5,23 @@ import { useAuth } from 'context/auth'
 
 const StreamContext = createContext()
 
+const makeGetStreamDataRequest = token => {
+  if (token) {
+    return {
+      url: `${API_HOST}/api/stream-data/me`,
+      method: 'get',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }
+  } else {
+    return {
+      url: `${API_HOST}/api/stream-data`,
+      method: 'get'
+    }
+  }
+}
+
 const StreamProvider = ({ children }) => {
   const [ streaming, setStreaming ] = useState(null)
   const [ playStreamUrl, setPlayStreamUrl ] = useState(null)
@@ -19,13 +36,7 @@ const StreamProvider = ({ children }) => {
     try {
       if (!background) setLoading(true)
 
-      const streamDataResponse = await axios.request({
-        url: `${API_HOST}/api/stream-data/me`,
-        method: 'get',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
+      const streamDataResponse = await axios.request(makeGetStreamDataRequest(token))
 
       setStreaming(streamDataResponse.data.streaming)
       setPlayStreamUrl(streamDataResponse.data.playStreamUrl)
@@ -52,7 +63,7 @@ const StreamProvider = ({ children }) => {
     return () => {
       window.clearInterval(handle)
     }
-  }, [ polling ])
+  }, [ polling, token ])
 
   useEffect(() => {
     if (streaming) {

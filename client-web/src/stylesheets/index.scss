@@ -55,7 +55,7 @@ a {
     transition: all 0.25s ease-out;
   }
 
-  &:hover {
+  &:hover, &.active {
     &::after {
       opacity: 1;
       transform: translateY(0px);
@@ -64,6 +64,24 @@ a {
 
   &.sign-in-with-slack {
     &::after { display: none; }
+  }
+}
+
+.underline {
+  display: inline-block;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    right: -2px;
+    left: -2px;
+    height: 2px;
+    background-color: $dark;
+    transform: translateY(5px);
+
+    transition: all 0.25s ease-out;
   }
 }
 
@@ -87,7 +105,13 @@ a {
     background-color: $dark;
     color: $light;
 
-    a::after { background-color: $light; }
+    a::after, .underline::after { background-color: $light; }
+
+    header { background-color: $dark; }
+
+    .page-container .page {
+      background-color: $dark;
+    }
 
     .video-player-container {
       background-color: $dark;
@@ -97,13 +121,26 @@ a {
         background-color: $dark;
       }
     }
+
+    .copy-code {
+      color: $dark;
+      background-color: $light;
+
+      a::after { background-color: $dark; }
+    }
   }
 
   &.light {
     background-color: $light;
     color: $dark;
 
-    a::after { background-color: $dark; }
+    a::after, .underline::after { background-color: $dark; }
+
+    header { background-color: $light; }
+
+    .page-container .page {
+      background-color: $light;
+    }
 
     .video-player-container {
       background-color: $light;
@@ -112,6 +149,13 @@ a {
       .video-player-overlay {
         background-color: $light;
       }
+    }
+
+    .copy-code {
+      color: $light;
+      background-color: $dark;
+
+      a::after { background-color: $light; }
     }
   }
 
@@ -129,6 +173,9 @@ header {
   padding: 10px 20px;
   align-items: center;
   z-index: 9999;
+  background-color: $light;
+
+  transition: background-color 0.25s linear;
 
   .logo {
     height: 100%;
@@ -152,7 +199,28 @@ header {
 
   .page {
     @extend .absolute-fill;
-    transform: translate(0%);
+    transform: translate(0%, 0%);
+    background-color: $light;
+
+    transition-timing-function: linear, ease-in-out;
+    transition-property: background-color, transform;
+    transition-duration: 0.25s, 0.5s;
+
+    &.slide-down-enter {
+      transform: translate(0%, -100%);
+
+      &.slide-down-enter-active {
+        transform: translate(0%, 0%);
+      }
+    }
+
+    &.slide-down-exit {
+      transform: translate(0%, 0%);
+
+      &.slide-down-exit-active {
+        transform: translate(0%, -100%);
+      }
+    }
   }
 }
 
@@ -181,6 +249,13 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.how-to-stream-page {
+  padding: $headerHeight + 40px 40px 40px;
+  text-align: center;
+
+  h2 { margin-bottom: 60px; }
 }
 
 .video-player-container {
@@ -221,6 +296,41 @@ header {
     background-color: $light;
 
     transition: background-color 0.25s linear;
+  }
+}
+
+.stream-data {
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+  text-align: left;
+
+  .stream-data-header {
+    display: flex;
+    align-items: flex-end;
+
+    h3, p { margin: 0; }
+    p { margin-left: auto; }
+  }
+
+  .copy-code {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 60px;
+    border-radius: 10px;
+    padding: 0 20px;
+    margin: 6px 0 20px 0;
+    color: $light;
+    background-color: $dark;
+
+    transition: color 0.25s linear;
+    transition-property: background-color, color;
+  
+    a {
+      margin-left: auto;
+      &::after { background-color: $light; }
+    }
   }
 }
 

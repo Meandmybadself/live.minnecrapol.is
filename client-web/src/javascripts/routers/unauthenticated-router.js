@@ -2,23 +2,36 @@ import React from 'react'
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 
 import AuthenticationScreen from 'screens/authentication-screen'
+import HomeScreen from 'screens/home-screen'
+
+import Header from 'components/header'
 
 const UnauthenticatedRouter = () => {
   return (
     <Router>
-      <Switch>
-        <Route path="/" exact>
-          <AuthenticationScreen />
-        </Route>
+      <Header />
 
-        <Route path="/auth/slack" exact>
-          <AuthenticationScreen />
-        </Route>
+      <div className="page-container">
 
-        <Route path="*">
-          <Redirect to="/" />
-        </Route>
-      </Switch>
+        <Switch>
+          <Route path="/" exact>
+            <HomeScreen />
+          </Route>
+
+          <Route path="/sign-in" exact>
+            <AuthenticationScreen />
+          </Route>
+
+          <Route path="/auth/slack" exact>
+            <AuthenticationScreen />
+          </Route>
+
+          <Route path="*">
+            <Redirect to="/" />
+          </Route>
+        </Switch>
+
+      </div>
     </Router>
   )
 }

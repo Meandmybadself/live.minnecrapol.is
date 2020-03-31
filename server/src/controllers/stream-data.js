@@ -6,11 +6,11 @@ const nms = require('../utilities/nms')
 const { MINNE_LIVE_PUBLISH_HOST, MINNE_LIVE_PUBLISH_PORT, MINNE_LIVE_PLAY_HOST,
   MINNE_LIVE_PLAY_PORT, MINNE_LIVE_PLAY_NEEDS_PORT, MINNE_LIVE_STREAM_KEY, MINNE_LIVE_AUTH_SECRET } = process.env
 
+const playStreamUrl = !MINNE_LIVE_PLAY_NEEDS_PORT ?
+  `${MINNE_LIVE_PLAY_HOST}/live/${MINNE_LIVE_STREAM_KEY}/index.m3u8` :
+  `${MINNE_LIVE_PLAY_HOST}:${MINNE_LIVE_PLAY_PORT}/live/${MINNE_LIVE_STREAM_KEY}/index.m3u8`
+
 const streamDataForStreamKey = (streamKey) => {
-  const playStreamUrl = !MINNE_LIVE_PLAY_NEEDS_PORT ?
-    `${MINNE_LIVE_PLAY_HOST}/live/${MINNE_LIVE_STREAM_KEY}/index.m3u8` :
-    `${MINNE_LIVE_PLAY_HOST}:${MINNE_LIVE_PLAY_PORT}/live/${MINNE_LIVE_STREAM_KEY}/index.m3u8`
-  
   return {
     playStreamUrl,
     publishStreamUrl: `${MINNE_LIVE_PUBLISH_HOST}:${MINNE_LIVE_PUBLISH_PORT}/live`,
@@ -45,4 +45,14 @@ exports.getStreamDataForUser = async (user, forceRenew = false) => {
   const streamKey = await StreamKey.create({ user: user._id, sign, expires })
 
   return streamDataForStreamKey(streamKey)
+}
+
+exports.getPublicStreamData = async () => {
+  return {
+    playStreamUrl,
+    publishStreamUrl: null,
+    publishStreamKey: null,
+    expires: null,
+    streaming: !!nms.getSession(nms.currentSessionId)
+  }
 }
