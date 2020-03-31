@@ -5,11 +5,12 @@ import { useAuth } from 'context/auth'
 
 const StreamContext = createContext()
 
-const makeGetStreamDataRequest = token => {
+const makeGetStreamDataRequest = (token, renew = false) => {
   if (token) {
     return {
       url: `${API_HOST}/api/stream-data/me`,
       method: 'get',
+      params: { renew },
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -32,11 +33,11 @@ const StreamProvider = ({ children }) => {
   const [ polling, setPolling ] = useState(false)
   const { token } = useAuth()
 
-  const getStreamData = async (background = false) => {
+  const getStreamData = async (background = false, renew = false) => {
     try {
       if (!background) setLoading(true)
 
-      const streamDataResponse = await axios.request(makeGetStreamDataRequest(token))
+      const streamDataResponse = await axios.request(makeGetStreamDataRequest(token, renew))
 
       setStreaming(streamDataResponse.data.streaming)
       setPlayStreamUrl(streamDataResponse.data.playStreamUrl)

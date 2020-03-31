@@ -23,7 +23,7 @@ router.use(require('../../middleware/validate-user'))
 
 router.get('/me', async (req, res, next) => {
   try {
-    const data = await StreamDataController.getStreamDataForUser(req.user)
+    const data = await StreamDataController.getStreamDataForUser(req.user, req.query.renew === 'true')
 
     return res.json(data)
   } catch (error) {
