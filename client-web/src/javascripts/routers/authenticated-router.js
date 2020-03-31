@@ -35,7 +35,7 @@ const AuthenticatedRouter = () => {
       <div className="page-container">
 
         <Switch>
-          <Route path="/">
+          <Route path={[ "/", "/how-to-stream" ]} exact>
             <HomeScreen />
 
             <HowToStreamContainer />
