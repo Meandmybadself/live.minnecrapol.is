@@ -1,4 +1,6 @@
 const crypto = require('crypto')
+const path = require('path')
+const fs = require('fs')
 
 const StreamKey = require('../schemas/stream-key')
 const nms = require('../utilities/nms')
@@ -7,16 +9,31 @@ const { MINNE_LIVE_PUBLISH_HOST, MINNE_LIVE_PUBLISH_PORT, MINNE_LIVE_PLAY_HOST,
   MINNE_LIVE_PLAY_PORT, MINNE_LIVE_PLAY_NEEDS_PORT, MINNE_LIVE_STREAM_KEY, MINNE_LIVE_AUTH_SECRET } = process.env
 
 const playStreamUrl = !MINNE_LIVE_PLAY_NEEDS_PORT ?
-  `${MINNE_LIVE_PLAY_HOST}/live/${MINNE_LIVE_STREAM_KEY}/index.m3u8` :
-  `${MINNE_LIVE_PLAY_HOST}:${MINNE_LIVE_PLAY_PORT}/live/${MINNE_LIVE_STREAM_KEY}/index.m3u8`
+  `${MINNE_LIVE_PLAY_HOST}/live/${MINNE_LIVE_STREAM_KEY}/index.mpd` :
+  `${MINNE_LIVE_PLAY_HOST}:${MINNE_LIVE_PLAY_PORT}/live/${MINNE_LIVE_STREAM_KEY}/index.mpd`
 
-const streamDataForStreamKey = (streamKey) => {
+// Make sure the files needed for playback are ready for client
+const streamFilesReady = async () => {
+  let ready = false
+
+  ready = await new Promise(resolve =>{
+    fs.stat(path.resolve(__dirname, '../../media/live/stream/index.mpd'), (error, stats) => {
+      resolve(!error)
+    })
+  })
+
+  return ready
+}
+
+const streamDataForStreamKey = async (streamKey) => {
+  const ready = await streamFilesReady()
+
   return {
     playStreamUrl,
     publishStreamUrl: `${MINNE_LIVE_PUBLISH_HOST}:${MINNE_LIVE_PUBLISH_PORT}/live`,
     publishStreamKey: `${MINNE_LIVE_STREAM_KEY}?sign=${streamKey.sign}`,
     expires: streamKey.expires,
-    streaming: !!nms.getSession(nms.currentSessionId)
+    streaming: !!nms.getSession(nms.currentSessionId) && ready
   }
 }
 
@@ -29,7 +46,7 @@ exports.getStreamDataForUser = async (user, forceRenew = false) => {
       await StreamKey.findByIdAndDelete(existingKey._id)
     } else {
       // Not expired key, return it
-      return streamDataForStreamKey(existingKey)
+      return await streamDataForStreamKey(existingKey)
     }
   }
 
@@ -44,15 +61,17 @@ exports.getStreamDataForUser = async (user, forceRenew = false) => {
   // New key expiring in 1 day
   const streamKey = await StreamKey.create({ user: user._id, sign, expires })
 
-  return streamDataForStreamKey(streamKey)
+  return await streamDataForStreamKey(streamKey)
 }
 
 exports.getPublicStreamData = async () => {
+  const ready = await streamFilesReady()
+
   return {
     playStreamUrl,
     publishStreamUrl: null,
     publishStreamKey: null,
     expires: null,
-    streaming: !!nms.getSession(nms.currentSessionId)
+    streaming: !!nms.getSession(nms.currentSessionId) && ready
   }
 }

@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import videojs from 'video.js'
+import 'dashjs'
+import 'videojs-contrib-dash'
+
+videojs.log.level('off')
 
 import { useStream } from 'context/stream'
 
@@ -9,15 +13,15 @@ const Video = ({ source, onError }) => {
   const videoRef = useRef()
 
   useEffect(() => {
-    let player = videojs(videoRef.current, {
-      autoplay: false,
-      controls: true,
-      preload: true,
-      sources: [{ src: source, type: 'application/x-mpegURL' }]
-    })
+    let player = videojs(videoRef.current, { controls: true })
 
     player.ready(() => {
-      player.tech().on('retryplaylist', onError)
+      player.src({
+        src: source,
+        type: 'application/dash+xml'
+      })
+
+      player.play()
     })
 
     player.on('error', onError)
@@ -38,7 +42,7 @@ const Video = ({ source, onError }) => {
 
 const VideoPlayer = () => {
   const [ error, setError ] = useState(false)
-  const { loading, streaming, playStreamUrl, setPolling, getStreamData } = useStream()
+  const { loading, streaming, playStreamUrl, setPolling } = useStream()
 
   useEffect(() => {
     if (error) setPolling(true)
@@ -51,19 +55,7 @@ const VideoPlayer = () => {
   }, [ streaming ])
 
   const onPlayerError = e => {
-    console.log('error', e)
-    if (e.type === 'retryplaylist') {
-      setError(true)
-    } else {
-      setError(true)
-
-      if (streaming) {
-        setTimeout(() => {
-          console.log('try again?')
-          setError(false)
-        }, 5000)
-      }
-    }
+    setError(true)
   }
 
   let overlay = null
