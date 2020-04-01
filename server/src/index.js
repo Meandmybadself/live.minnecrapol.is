@@ -2,7 +2,11 @@ require('dotenv').config()
 
 const express = require('express')
 const mongoose = require('mongoose')
+const fs = require('fs-extra')
 const path = require('path')
+
+// Empty the directory that holds the temp video files on start
+fs.emptyDirSync(path.resolve(__dirname, '../media/live/stream'))
 
 // Node Media Server
 const nms = require('./utilities/nms')
