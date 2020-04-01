@@ -27,13 +27,24 @@ const streamFilesReady = async () => {
 
 const streamDataForStreamKey = async (streamKey) => {
   const ready = await streamFilesReady()
+  const session = nms.getSession(nms.currentSessionId)
+  const streaming = !!session && ready
+
+  let streamingUser = null
+  if (streaming) {
+    const streamKey = await StreamKey.findOne({ sign: session.publishArgs.sign }).populate('user')
+    if (streamKey) {
+      streamingUser = streamKey.user.display_name
+    }
+  }
 
   return {
     playStreamUrl,
     publishStreamUrl: `${MINNE_LIVE_PUBLISH_HOST}:${MINNE_LIVE_PUBLISH_PORT}/live`,
     publishStreamKey: `${MINNE_LIVE_STREAM_KEY}?sign=${streamKey.sign}`,
     expires: streamKey.expires,
-    streaming: !!nms.getSession(nms.currentSessionId) && ready
+    streaming,
+    streamingUser
   }
 }
 
@@ -66,12 +77,23 @@ exports.getStreamDataForUser = async (user, forceRenew = false) => {
 
 exports.getPublicStreamData = async () => {
   const ready = await streamFilesReady()
+  const session = nms.getSession(nms.currentSessionId)
+  const streaming = !!session && ready
+
+  let streamingUser = null
+  if (streaming) {
+    const streamKey = await StreamKey.findOne({ sign: session.publishArgs.sign }).populate('user')
+    if (streamKey) {
+      streamingUser = streamKey.user.display_name
+    }
+  }
 
   return {
     playStreamUrl,
     publishStreamUrl: null,
     publishStreamKey: null,
     expires: null,
-    streaming: !!nms.getSession(nms.currentSessionId) && ready
+    streaming,
+    streamingUser
   }
 }

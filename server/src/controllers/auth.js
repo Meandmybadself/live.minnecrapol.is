@@ -1,20 +1,23 @@
 const jwt = require('jsonwebtoken')
 
 const User = require('../schemas/user')
-const { SlackWebClient } = require('../utilities/slack')
+const { SlackOAuthWebClient, SlackBotWebClient } = require('../utilities/slack')
 
 exports.signInWithSlack = async (code, redirect_uri) => {
-  const oAuthResponse = await SlackWebClient.oauth.access({
+  const oAuthResponse = await SlackOAuthWebClient.oauth.access({
     client_id: process.env.MINNE_LIVE_SLACK_CLIENT_ID,
     client_secret: process.env.MINNE_LIVE_SLACK_CLIENT_SECRET,
     code,
     redirect_uri
   })
 
+  const userInfoResponse = await SlackBotWebClient.users.info({ user: oAuthResponse.user_id })
+
   const userData = {
     user_id: oAuthResponse.user_id,
     team_id: oAuthResponse.team_id,
     name: oAuthResponse.user.name,
+    display_name: userInfoResponse.user.profile.display_name,
     avatar: oAuthResponse.user.image_1024,
     access_token: oAuthResponse.access_token
   }

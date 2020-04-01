@@ -43,7 +43,7 @@ const Video = ({ source, onError }) => {
 let count = 0;
 const VideoPlayer = () => {
   const [ error, setError ] = useState(false)
-  const { loading, streaming, playStreamUrl, setPolling } = useStream()
+  const { loading, streaming, playStreamUrl, streamingUser, setPolling } = useStream()
 
   useEffect(() => {
     if (error) setPolling(true)
@@ -94,6 +94,12 @@ const VideoPlayer = () => {
       </div>
 
       { overlay }
+
+      { streamingUser &&
+        <div className="now-streaming">
+          { `Now Streaming: @${streamingUser}` }
+        </div>
+      }
     </div>
   )
 }

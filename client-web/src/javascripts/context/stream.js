@@ -29,6 +29,7 @@ const StreamProvider = ({ children }) => {
   const [ publishStreamUrl, setPublishStreamUrl ] = useState(null)
   const [ publishStreamKey, setPublishStreamKey ] = useState(null)
   const [ expires, setExpires ] = useState(null)
+  const [ streamingUser, setStreamingUser ] = useState(false)
   const [ loading, setLoading ] = useState(false)
   const [ polling, setPolling ] = useState(false)
   const { token } = useAuth()
@@ -44,6 +45,7 @@ const StreamProvider = ({ children }) => {
       setPublishStreamUrl(streamDataResponse.data.publishStreamUrl)
       setPublishStreamKey(streamDataResponse.data.publishStreamKey)
       setExpires(streamDataResponse.data.expires)
+      setStreamingUser(streamDataResponse.data.streamingUser)
     } catch (error) {
       console.error('Error getting streaming data', error)
     } finally {
@@ -85,6 +87,7 @@ const StreamProvider = ({ children }) => {
     publishStreamKey,
     expires,
     loading,
+    streamingUser,
 
     setPolling,
     getStreamData
