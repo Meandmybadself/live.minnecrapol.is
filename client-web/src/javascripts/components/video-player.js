@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 import videojs from 'video.js'
-import 'dashjs'
-import 'videojs-contrib-dash'
 
 videojs.log.level('off')
 
@@ -13,7 +11,7 @@ const Video = ({ source, onError }) => {
   const videoRef = useRef()
 
   useEffect(() => {
-    let player = videojs(videoRef.current, { controls: true })
+    let player = videojs(videoRef.current, { autoplay: true, preload: true, controls: true })
 
     player.ready(() => {
       player.src({
