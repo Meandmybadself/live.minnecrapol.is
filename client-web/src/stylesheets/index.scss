@@ -35,6 +35,10 @@ img {
   padding: 0;
 }
 
+p {
+  line-height: 1.5;
+}
+
 a {
   position: relative;
   text-decoration: none;
@@ -200,26 +204,39 @@ header {
   .page {
     @extend .absolute-fill;
     transform: translate(0%, 0%);
+    opacity: 1;
     background-color: $light;
 
     transition-timing-function: linear, ease-in-out;
-    transition-property: background-color, transform;
+    transition-property: background-color, opacity;
     transition-duration: 0.25s, 0.5s;
 
     &.slide-down-enter {
-      transform: translate(0%, -100%);
+      // transform: translate(0%, -100%);
+      opacity: 0;
 
       &.slide-down-enter-active {
-        transform: translate(0%, 0%);
+        // transform: translate(0%, 0%);
+        opacity: 1;
       }
     }
 
     &.slide-down-exit {
-      transform: translate(0%, 0%);
+      // transform: translate(0%, 0%);
+      opacity: 1;
 
       &.slide-down-exit-active {
-        transform: translate(0%, -100%);
+        // transform: translate(0%, -100%);
+        opacity: 0;
       }
+    }
+
+    .page-scrolling-content {
+      @extend .absolute-fill;
+      padding-top: $headerHeight;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
     }
   }
 }
@@ -251,11 +268,14 @@ header {
   justify-content: center;
 }
 
-.how-to-stream-page {
-  padding: $headerHeight + 40px 40px 40px;
-  text-align: center;
+.how-to-stream-content {
+  width: 100%;
+  max-width: 960px;
+  margin: auto;
+  padding: 20px;
+  // text-align: center;
 
-  h2 { margin-bottom: 60px; }
+  h2 { margin-bottom: 30px; }
   
   .more-details-soon { margin-top: 60px; }
 }
@@ -302,8 +322,6 @@ header {
 }
 
 .stream-data {
-  width: 100%;
-  max-width: 600px;
   margin: auto;
   text-align: left;
 
