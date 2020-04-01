@@ -12,12 +12,14 @@ const Video = ({ source, onError }) => {
 
   useEffect(() => {
     let player = videojs(videoRef.current, { autoplay: true, preload: true, controls: true })
-
+    console.log(source)
     player.ready(() => {
-      player.src({
-        src: source,
-        type: 'application/dash+xml'
-      })
+      // player.tech().on('retryplaylist', onError)
+      
+      player.src([
+        { src: `${source}.mpd`, type: 'application/dash+xml' },
+        { src: `${source}.m3u8`, type: 'application/x-mpegURL' }
+      ])
 
       player.play()
     })
@@ -38,6 +40,7 @@ const Video = ({ source, onError }) => {
   )
 }
 
+let count = 0;
 const VideoPlayer = () => {
   const [ error, setError ] = useState(false)
   const { loading, streaming, playStreamUrl, setPolling } = useStream()

@@ -9,7 +9,7 @@ const path = require('path')
 fs.emptyDirSync(path.resolve(__dirname, '../media/live/stream'))
 
 // Node Media Server
-const nms = require('./utilities/nms')
+require('./utilities/nms')
 
 // MongoDB
 mongoose.set('useFindAndModify', false)

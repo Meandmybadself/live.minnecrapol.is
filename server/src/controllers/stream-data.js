@@ -9,8 +9,8 @@ const { MINNE_LIVE_PUBLISH_HOST, MINNE_LIVE_PUBLISH_PORT, MINNE_LIVE_PLAY_HOST,
   MINNE_LIVE_PLAY_PORT, MINNE_LIVE_PLAY_NEEDS_PORT, MINNE_LIVE_STREAM_KEY, MINNE_LIVE_AUTH_SECRET } = process.env
 
 const playStreamUrl = !MINNE_LIVE_PLAY_NEEDS_PORT ?
-  `${MINNE_LIVE_PLAY_HOST}/live/${MINNE_LIVE_STREAM_KEY}/index.mpd` :
-  `${MINNE_LIVE_PLAY_HOST}:${MINNE_LIVE_PLAY_PORT}/live/${MINNE_LIVE_STREAM_KEY}/index.mpd`
+  `${MINNE_LIVE_PLAY_HOST}/live/${MINNE_LIVE_STREAM_KEY}/index` :
+  `${MINNE_LIVE_PLAY_HOST}:${MINNE_LIVE_PLAY_PORT}/live/${MINNE_LIVE_STREAM_KEY}/index`
 
 // Make sure the files needed for playback are ready for client
 const streamFilesReady = async () => {
