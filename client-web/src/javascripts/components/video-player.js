@@ -15,12 +15,14 @@ const Video = ({ source, onError }) => {
     console.log(source)
     player.ready(() => {
       // player.tech().on('retryplaylist', onError)
-      
-      player.src([
-        { src: `${source}.mpd`, type: 'application/dash+xml' },
-        { src: `${source}.m3u8`, type: 'application/x-mpegURL' }
-      ])
 
+      // Use HLS but add DASH if Chrome browser detected
+      let src = [ { src: `${source}.m3u8`, type: 'application/x-mpegURL' } ]
+      if (videojs.browser.IS_CHROME) {
+        src.unshift({ src: `${source}.mpd`, type: 'application/dash+xml' })
+      }
+      
+      player.src(src)
       player.play()
     })
 
