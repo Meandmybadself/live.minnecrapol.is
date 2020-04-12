@@ -1,4 +1,24 @@
 const NodeMediaServer = require('node-media-server')
+const { WebClient } = require('@slack/web-api')
+const StreamKey = require('../schemas/stream-key')
+const web = new WebClient(process.env.MINNE_LIVE_SLACK_BOT_TOKEN)
+
+const lookupUserWithStreamKeySig = async (sign) => {
+  // Look up user with stream key signature.
+  const userLookup = await StreamKey.aggregate()
+    .match({ sign })
+    .lookup({
+      from: 'users',
+      localField: 'user',
+      foreignField: '_id',
+      as: 'user'
+    })
+    .unwind('$user')
+
+  if (userLookup.length) {
+    return userLookup[0].user
+  }
+}
 
 const config = {
   rtmp: {
@@ -19,7 +39,10 @@ const config = {
     mediaroot: './media'
   },
   trans: {
-    ffmpeg: process.env.NODE_ENV === 'development' ? '/usr/local/bin/ffmpeg' : '/usr/bin/ffmpeg',
+    ffmpeg:
+      process.env.NODE_ENV === 'development'
+        ? '/usr/local/bin/ffmpeg'
+        : '/usr/bin/ffmpeg',
     tasks: [
       {
         app: 'live',
@@ -43,8 +66,8 @@ nms.on('doneConnect', (id, args) => {
     nms.currentSessionId = undefined
   }
 })
-nms.on('prePublish', (id, StreamPath, args) => {
-  console.log('prePublish')
+nms.on('prePublish', async (id, StreamPath, { sign }) => {
+  console.log('prePublish', sign)
 
   // DOES PRE PUBLISH HAPPEN EVEN IF SOMEONE IS ALREADY STREAMING?
   // SHOULDN'T SET THIS IF SO, IT SHOULD BE THE ACTIVE STREAMER
@@ -59,10 +82,32 @@ nms.on('prePublish', (id, StreamPath, args) => {
     session.reject()
   } else {
     nms.currentSessionId = id
+
+    const user = await lookupUserWithStreamKeySig(sign)
+    if (user) {
+      await web.chat.postMessage({
+        text: `${user.display_name} (${user.name}) has started a new stream.`,
+        channel: process.env.MINNE_LIVE_CHANNEL_ID,
+        attachments: [
+          {
+            title: '🎧  Listen here  🎧',
+            title_link: 'https://live.minnecrapol.is/'
+          }
+        ]
+      })
+    }
   }
 })
 nms.on('postPublish', (id, StreamPath, args) => console.log('postPublish'))
-nms.on('donePublish', (id, StreamPath, args) => console.log('donePublish'))
+nms.on('donePublish', async (id, StreamPath, { sign }) => {
+  const user = await lookupUserWithStreamKeySig(sign)
+  if (user) {
+    await web.chat.postMessage({
+      text: `${user.display_name} (${user.name}) has stopped streaming.`,
+      channel: process.env.MINNE_LIVE_CHANNEL_ID
+    })
+  }
+})
 nms.on('prePlay', (id, StreamPath, args) => console.log('prePlay'))
 nms.on('postPlay', (id, StreamPath, args) => console.log('postPlay'))
 nms.on('donePlay', (id, StreamPath, args) => console.log('donePlay'))
