@@ -9,7 +9,8 @@ $headerHeight: 80px;
 $videoPlayerMaxWidthPercent: 85;
 $videoPlayerMaxHeightPercent: 70;
 
-html, body {
+html,
+body {
   position: relative;
   margin: 0;
   padding: 0;
@@ -25,7 +26,9 @@ html, body {
   box-sizing: border-box;
 }
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: inherit;
 }
 
@@ -59,7 +62,8 @@ a {
     transition: all 0.25s ease-out;
   }
 
-  &:hover, &.active {
+  &:hover,
+  &.active {
     &::after {
       opacity: 1;
       transform: translateY(0px);
@@ -67,7 +71,9 @@ a {
   }
 
   &.sign-in-with-slack {
-    &::after { display: none; }
+    &::after {
+      display: none;
+    }
   }
 }
 
@@ -109,9 +115,14 @@ a {
     background-color: $dark;
     color: $light;
 
-    a::after, .underline::after { background-color: $light; }
+    a::after,
+    .underline::after {
+      background-color: $light;
+    }
 
-    header { background-color: $dark; }
+    header {
+      background-color: $dark;
+    }
 
     .page-container .page {
       background-color: $dark;
@@ -130,7 +141,9 @@ a {
       color: $dark;
       background-color: $light;
 
-      a::after { background-color: $dark; }
+      a::after {
+        background-color: $dark;
+      }
     }
   }
 
@@ -138,9 +151,14 @@ a {
     background-color: $light;
     color: $dark;
 
-    a::after, .underline::after { background-color: $dark; }
+    a::after,
+    .underline::after {
+      background-color: $dark;
+    }
 
-    header { background-color: $light; }
+    header {
+      background-color: $light;
+    }
 
     .page-container .page {
       background-color: $light;
@@ -159,12 +177,15 @@ a {
       color: $light;
       background-color: $dark;
 
-      a::after { background-color: $light; }
+      a::after {
+        background-color: $light;
+      }
     }
   }
 
   transition: all 0.25s linear;
-  transition-property: background-color, color;
+  transition-property: background-color,
+  color;
 }
 
 header {
@@ -241,7 +262,9 @@ header {
   }
 }
 
-.loading-page, .sign-in-page, .not-found-page {
+.loading-page,
+.sign-in-page,
+.not-found-page {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -258,7 +281,9 @@ header {
     justify-content: center;
     text-align: center;
 
-    a { margin: 40px 0; }
+    a {
+      margin: 40px 0;
+    }
   }
 }
 
@@ -275,9 +300,13 @@ header {
   padding: 20px;
   // text-align: center;
 
-  h2 { margin-bottom: 30px; }
-  
-  .more-details-soon { margin-top: 60px; }
+  h2 {
+    margin-bottom: 30px;
+  }
+
+  .more-details-soon {
+    margin-top: 60px;
+  }
 }
 
 .video-player-container {
@@ -286,7 +315,7 @@ header {
   height: #{(9/16) * $videoPlayerMaxWidthPercent}vw;
   max-height: #{$videoPlayerMaxHeightPercent}vh;
   max-width: #{(16/9) * $videoPlayerMaxHeightPercent}vh;
-  border-radius: 2%/4%;
+  //border-radius: 2%/4%;
   background-color: $light;
   box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, 0.25);
 
@@ -309,7 +338,7 @@ header {
     border-radius: 2%/4%;
     overflow: hidden;
 
-    & > div {
+    &>div {
       width: 100%;
       height: 100%;
     }
@@ -318,7 +347,9 @@ header {
       width: 100%;
       height: 100%;
 
-      .vjs-error-display { display: none; }
+      .vjs-error-display {
+        display: none;
+      }
     }
   }
 
@@ -343,8 +374,14 @@ header {
     display: flex;
     align-items: flex-end;
 
-    h3, p { margin: 0; }
-    p { margin-left: auto; }
+    h3,
+    p {
+      margin: 0;
+    }
+
+    p {
+      margin-left: auto;
+    }
   }
 
   .copy-code {
@@ -360,10 +397,13 @@ header {
 
     transition: color 0.25s linear;
     transition-property: background-color, color;
-  
+
     a {
       margin-left: auto;
-      &::after { background-color: $light; }
+
+      &::after {
+        background-color: $light;
+      }
     }
   }
 }
@@ -374,6 +414,7 @@ header {
   width: 80px;
   height: 80px;
 }
+
 .lds-ring div {
   box-sizing: border-box;
   display: block;
@@ -386,19 +427,24 @@ header {
   animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
   border-color: #8c5e2d transparent transparent transparent;
 }
+
 .lds-ring div:nth-child(1) {
   animation-delay: -0.45s;
 }
+
 .lds-ring div:nth-child(2) {
   animation-delay: -0.3s;
 }
+
 .lds-ring div:nth-child(3) {
   animation-delay: -0.15s;
 }
+
 @keyframes lds-ring {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
