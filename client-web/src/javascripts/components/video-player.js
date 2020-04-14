@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 import videojs from 'video.js'
-import offair from 'images/off-air.png'
 
 videojs.log.level('off')
 
@@ -50,7 +49,6 @@ const Video = ({ source, onError }) => {
   )
 }
 
-let count = 0
 const VideoPlayer = () => {
   const [error, setError] = useState(false)
   const {
@@ -83,11 +81,7 @@ const VideoPlayer = () => {
       </div>
     )
   } else if (!streaming) {
-    overlay = (
-      <div className='video-player-overlay'>
-        <img className='offair' src={offair} />
-      </div>
-    )
+    overlay = ( <div className='video-player-overlay video-player-overlay--offair' /> )
   } else if (error) {
     overlay = (
       <div className='video-player-overlay'>
