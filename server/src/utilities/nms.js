@@ -1,24 +1,6 @@
 const NodeMediaServer = require('node-media-server')
-const { WebClient } = require('@slack/web-api')
 const StreamKey = require('../schemas/stream-key')
-const web = new WebClient(process.env.MINNE_LIVE_SLACK_BOT_TOKEN)
-
-const lookupUserWithStreamKeySig = async (sign) => {
-  // Look up user with stream key signature.
-  const userLookup = await StreamKey.aggregate()
-    .match({ sign })
-    .lookup({
-      from: 'users',
-      localField: 'user',
-      foreignField: '_id',
-      as: 'user'
-    })
-    .unwind('$user')
-
-  if (userLookup.length) {
-    return userLookup[0].user
-  }
-}
+const { SlackBotWebClient } = require('./slack')
 
 const config = {
   rtmp: {
@@ -59,13 +41,7 @@ module.exports = nms = new NodeMediaServer(config)
 
 nms.on('preConnect', (id, args) => console.log('preConnect'))
 nms.on('postConnect', (id, args) => console.log('postConnect'))
-nms.on('doneConnect', (id, args) => {
-  console.log('doneConnect')
-
-  if (nms.currentSessionId === id) {
-    nms.currentSessionId = undefined
-  }
-})
+nms.on('doneConnect', (id, args) => console.log('doneConnect'))
 nms.on('prePublish', async (id, StreamPath, { sign }) => {
   console.log('prePublish', sign)
 
@@ -73,36 +49,44 @@ nms.on('prePublish', async (id, StreamPath, { sign }) => {
   // SHOULDN'T SET THIS IF SO, IT SHOULD BE THE ACTIVE STREAMER
   const session = nms.getSession(id)
 
-  const parts = StreamPath.split('/')
-  const key = parts[parts.length - 1].trim()
+  // Only allowing streamers with a valid stream key.
+  // Check if matching streamkey exists and is not expired.
+  // NMS also does this, but it's faster this way?
+  const streamKey = await StreamKey.findBySign(sign)
 
-  // Only allowing a single stream right now,
-  // check if this matches our streamKey
-  if (key !== process.env.MINNE_LIVE_STREAM_KEY) {
+  if (!streamKey || streamKey.expired) {
     session.reject()
-  } else {
-    nms.currentSessionId = id
 
-    const user = await lookupUserWithStreamKeySig(sign)
-    if (user) {
-      await web.chat.postMessage({
-        text: `${user.display_name} (${user.name}) has started a new stream.`,
-        channel: process.env.MINNE_LIVE_CHANNEL_ID,
-        attachments: [
-          {
-            title: '🎧  Listen here  🎧',
-            title_link: 'https://live.minnecrapol.is/'
-          }
-        ]
-      })
-    }
+    return false
   }
+
+  nms.currentSessionId = id
+
+  const { user } = streamKey
+  await SlackBotWebClient.chat.postMessage({
+    text: `${user.display_name} (${user.name}) has started a new stream.`,
+    channel: process.env.MINNE_LIVE_CHANNEL_ID,
+    attachments: [
+      {
+        title: '🎧  Listen here  🎧',
+        title_link: 'https://live.minnecrapol.is/'
+      }
+    ]
+  })
 })
 nms.on('postPublish', (id, StreamPath, args) => console.log('postPublish'))
 nms.on('donePublish', async (id, StreamPath, { sign }) => {
-  const user = await lookupUserWithStreamKeySig(sign)
-  if (user) {
-    await web.chat.postMessage({
+  console.log('donePublish')
+
+  if (nms.currentSessionId !== id) return false
+
+  nms.currentSessionId = undefined
+
+  const streamKey = await StreamKey.findBySign(sign)
+  if (streamKey) {
+    const { user } = streamKey
+
+    await SlackBotWebClient.chat.postMessage({
       text: `${user.display_name} (${user.name}) has stopped streaming.`,
       channel: process.env.MINNE_LIVE_CHANNEL_ID
     })

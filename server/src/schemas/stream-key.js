@@ -17,6 +17,14 @@ const streamKeySchema = new mongoose.Schema({
   }
 }, { versionKey: false })
 
+streamKeySchema.virtual('expired').get(function() {
+  return this.expires <= new Date()
+})
+
+streamKeySchema.static('findBySign', function(sign) {
+  return this.findOne({ sign }).populate('user')
+})
+
 const StreamKey = mongoose.model('StreamKey', streamKeySchema)
 
 module.exports = StreamKey
