@@ -42,6 +42,10 @@ p {
   line-height: 1.5;
 }
 
+nav {
+  
+}
+
 a {
   position: relative;
   text-decoration: none;
@@ -70,7 +74,7 @@ a {
     }
   }
 
-  &.sign-in-with-slack {
+  &.sign-in-with-slack, &.logo-link, &.mobile-toggle {
     &::after {
       display: none;
     }
@@ -122,6 +126,14 @@ a {
 
     header {
       background-color: $dark;
+
+      nav { background-color: $dark; }
+
+      .mobile-toggle {
+        .top-bun, .patty, .bottom-bun {
+          background-color: $light;
+        }
+      }
     }
 
     .page-container .page {
@@ -158,6 +170,14 @@ a {
 
     header {
       background-color: $light;
+
+      nav { background-color: $light; }
+
+      .mobile-toggle {
+        .top-bun, .patty, .bottom-bun {
+          background-color: $dark;
+        }
+      }
     }
 
     .page-container .page {
@@ -202,19 +222,77 @@ header {
 
   transition: background-color 0.25s linear;
 
-  .logo {
+  .logo-link {
+    position: relative;
     height: 100%;
-    width: auto;
-    margin-right: 20px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    z-index: 2;
+
+    .logo {
+      height: 100%;
+      width: auto;
+      margin-right: 20px;
+    }
+
+    h1 { margin: 0; }
   }
 
-  a {
-    font-style: normal;
-    margin-left: 20px;
+  nav {
+    margin-left: auto;
+    background-color: $light;
+    z-index: 1;
 
-    &:first-of-type {
-      margin-left: auto;
+    transition: background-color 0.25s linear;
+
+    a { margin-left: 20px; }
+
+    &.mobile-open {
+      @extend .absolute-fill;
+      position: fixed;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: $light;
+
+      a { margin: 10px 0; }
     }
+  }
+
+  .mobile-toggle {
+    display: none;
+    position: relative;
+    width: 40px;
+    height: 25px;
+    margin-left: auto;
+    z-index: 2;
+
+    .top-bun, .patty, .bottom-bun {
+      position: absolute;
+      width: 100%;
+      height: 3px;
+      top: 50%;
+      bottom: auto;
+      left: 0;
+      background-color: $dark;
+
+      transition: background-color 0.25s linear;
+    }
+
+    &:not(.active) {
+      .top-bun { top: 0%; bottom: auto; }
+      .patty { transform: translateY(-50%); }
+      .bottom-bun { bottom: 0%; top: auto; }
+    }
+
+    &.active {
+      .patty { display: none; }
+      .top-bun { transform: rotateZ(45deg); }
+      .bottom-bun { transform: rotateZ(-45deg); }
+    }
+
   }
 }
 
@@ -453,5 +531,22 @@ header {
 
   100% {
     transform: rotate(360deg);
+  }
+}
+
+// MOBILE LAST, SUCKER!
+@media (max-width: 768px) {
+  header {
+    .logo-link {
+      .logo { margin-right: 10px; }
+
+      h1 { font-size: 1em; }
+    }
+
+    nav:not(.mobile-open) {
+      display: none;
+    }
+
+    .mobile-toggle { display: block; }
   }
 }
