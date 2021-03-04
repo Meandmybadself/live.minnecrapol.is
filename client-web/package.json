@@ -9,7 +9,7 @@
     "build:watch": "webpack --config ./webpack.config.js --watch --mode production"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "moment": "^2.24.0",
     "normalize.css": "^8.0.1",
