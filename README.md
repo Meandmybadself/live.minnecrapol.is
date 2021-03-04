@@ -1,4 +1,9 @@
-# Live.Minnecrapolis
+# [Live.Minnecrapol.is](https://live.minnecrapol.is/)
+
+[![Server promotion CI](https://github.com/Meandmybadself/live.minnecrapol.is/actions/workflows/promote-to-server.yml/badge.svg)](https://github.com/Meandmybadself/live.minnecrapol.is/actions/workflows/promote-to-server.yml)
+
+## Overview
+The music / video streaming service for [minnecrapol.is](https://minnecrapol.is)
 
 ## Development
 
