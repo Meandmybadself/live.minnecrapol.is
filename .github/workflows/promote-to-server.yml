@@ -1,0 +1,30 @@
+name: Promote to server
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+    workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@master
+        timeout-minutes: 10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            . ~/.nvm/nvm.sh
+            cd ${{ secrets.CWD }}
+            git fetch --all
+            git reset --hard origin/master
+            rm -rf node_modules
+            nvm use
+            npm i --silent
+            pm2 restart live.minnecrapol.is
