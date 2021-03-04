@@ -1,0 +1,47 @@
+{
+  "name": "live.minnecrapol.is",
+  "version": "1.0.0",
+  "description": "Client & server for live.minnecrapol.is",
+  "main": "index.js",
+  "scripts": {
+    "precommit": "lint-staged"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Meandmybadself/live.minnecrapol.is.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Meandmybadself/live.minnecrapol.is/issues"
+  },
+  "homepage": "https://github.com/Meandmybadself/live.minnecrapol.is#readme",
+  "devDependencies": {
+    "eslint-config-prettier": "^8.1.0",
+    "husky": "^5.1.3",
+    "lint-staged": "^10.5.4",
+    "prettier": "^2.2.1",
+    "xo": "^0.38.2"
+  },
+  "xo": {
+    "extends": [
+      "prettier"
+    ],
+    "ignore": [
+      "node_modules/**/*.*"
+    ]
+  },
+  "lint-staged": {
+    "*.js": [
+      "xo --fix",
+      "npm run lint",
+      "prettier --write",
+      "git add"
+    ],
+    "*.css": [
+      "prettier --write",
+      "git add"
+    ]
+  }
+}
