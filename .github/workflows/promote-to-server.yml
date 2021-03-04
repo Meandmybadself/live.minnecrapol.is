@@ -3,8 +3,6 @@ name: Promote to server
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
     workflow_dispatch:
 
@@ -24,7 +22,11 @@ jobs:
             cd ${{ secrets.CWD }}
             git fetch --all
             git reset --hard origin/master
-            rm -rf node_modules
             nvm use
+            cd client-web
+            rm -rf node_modules
+            npm i --silent
+            cd ../server
+            rm -rf node_modules
             npm i --silent
             pm2 restart live.minnecrapol.is
