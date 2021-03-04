@@ -4,7 +4,7 @@ const StreamDataController = require('../../controllers/stream-data')
 
 const router = express.Router()
 
-router.get('/', async (req, res, next) => {
+router.get('/', async (request, res, next) => {
   try {
     const data = await StreamDataController.getPublicStreamData()
 
@@ -21,9 +21,9 @@ router.get('/', async (req, res, next) => {
 router.use(require('../../middleware/validate-jwt'))
 router.use(require('../../middleware/validate-user'))
 
-router.get('/me', async (req, res, next) => {
+router.get('/me', async (request, res, next) => {
   try {
-    const data = await StreamDataController.getStreamDataForUser(req.user, req.query.renew === 'true')
+    const data = await StreamDataController.getStreamDataForUser(request.user, request.query.renew === 'true')
 
     return res.json(data)
   } catch (error) {

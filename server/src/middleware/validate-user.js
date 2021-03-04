@@ -1,13 +1,13 @@
 const User = require('../schemas/user')
 
-module.exports = async (req, res, next) => {
-  if (!req.user) {
+module.exports = async (request, res, next) => {
+  if (!request.user) {
     const error = new Error('User does not exist')
     error.status = 401
     return next(error)
   }
 
-  const { _id } = req.user
+  const { _id } = request.user
   if (!_id) {
     const error = new Error('User does not exist')
     error.status = 401
@@ -21,7 +21,7 @@ module.exports = async (req, res, next) => {
     return next(error)
   }
 
-  req.user = user
+  request.user = user
 
   next()
 }

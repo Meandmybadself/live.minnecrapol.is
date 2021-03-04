@@ -7,5 +7,5 @@ import MinnecrapolisLive from './components/minnecrapolis-live.js'
 
 render(
   <MinnecrapolisLive />,
-  document.getElementById('minnecrapolis-live')
+  document.querySelector('#minnecrapolis-live')
 )

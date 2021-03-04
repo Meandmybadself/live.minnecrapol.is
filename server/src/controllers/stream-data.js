@@ -28,7 +28,7 @@ const streamFilesReady = async () => {
 const streamDataForStreamKey = async (streamKey) => {
   const ready = await streamFilesReady()
   const session = nms.getSession(nms.currentSessionId)
-  const streaming = !!session && ready
+  const streaming = Boolean(session) && ready
 
   let streamingUser = null
   if (streaming) {
@@ -78,7 +78,7 @@ exports.getStreamDataForUser = async (user, forceRenew = false) => {
 exports.getPublicStreamData = async () => {
   const ready = await streamFilesReady()
   const session = nms.getSession(nms.currentSessionId)
-  const streaming = !!session && ready
+  const streaming = Boolean(session) && ready
 
   let streamingUser = null
   if (streaming) {

@@ -11,17 +11,17 @@ const Video = ({ source, onError }) => {
   const videoRef = useRef()
 
   useEffect(() => {
-    let player = videojs(videoRef.current, {
+    const player = videojs(videoRef.current, {
       autoplay: true,
       preload: true,
       controls: true
     })
     console.log(source)
     player.ready(() => {
-      // player.tech().on('retryplaylist', onError)
+      // Player.tech().on('retryplaylist', onError)
 
       // Use HLS but add DASH if Chrome browser detected
-      let src = [{ src: `${source}.m3u8`, type: 'application/x-mpegURL' }]
+      const src = [{ src: `${source}.m3u8`, type: 'application/x-mpegURL' }]
       if (videojs.browser.IS_CHROME) {
         src.unshift({ src: `${source}.mpd`, type: 'application/dash+xml' })
       }

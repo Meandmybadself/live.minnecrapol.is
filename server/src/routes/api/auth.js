@@ -4,9 +4,9 @@ const AuthController = require('../../controllers/auth')
 
 const router = express.Router()
 
-router.post('/slack', async (req, res, next) => {
+router.post('/slack', async (request, res, next) => {
   try {
-    const data = await AuthController.signInWithSlack(req.body.code, req.body.redirect_uri)
+    const data = await AuthController.signInWithSlack(request.body.code, request.body.redirect_uri)
 
     return res.json(data)
   } catch (error) {
@@ -21,9 +21,9 @@ router.post('/slack', async (req, res, next) => {
 router.use(require('../../middleware/validate-jwt'))
 router.use(require('../../middleware/validate-user'))
 
-router.post('/refresh', async (req, res, next) => {
+router.post('/refresh', async (request, res, next) => {
   try {
-    const data = await AuthController.refresh(req.user)
+    const data = await AuthController.refresh(request.user)
 
     return res.json(data)
   } catch (error) {

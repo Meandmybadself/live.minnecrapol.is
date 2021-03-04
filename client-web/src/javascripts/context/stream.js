@@ -15,12 +15,13 @@ const makeGetStreamDataRequest = (token, renew = false) => {
         'Authorization': `Bearer ${token}`
       }
     }
-  } else {
+  }
+ 
     return {
       url: `${API_HOST}/api/stream-data`,
       method: 'get'
     }
-  }
+  
 }
 
 const StreamProvider = ({ children }) => {

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 
-module.exports = (req, res, next) => {
-  const { headers } = req
+module.exports = (request, res, next) => {
+  const { headers } = request
   if (!headers) {
     const error = new Error('Authorization header not provided')
     error.status = 401
@@ -26,7 +26,7 @@ module.exports = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.MINNE_LIVE_JWT_SECRET, { ignoreExpiration: true })
 
-    req.user = { _id: decoded._id }
+    request.user = { _id: decoded._id }
 
     next()
   } catch (error) {
