@@ -1,5 +1,5 @@
 const express = require('express')
-const SpotifyClient = require('../utilities/spotify')
+const SpotifyClient = require('../../utilities/spotify')
 const spotifyClient = new SpotifyClient(process.env.SPOTIFY_CLIENT_ID, process.env.SPOTIFY_CLIENT_SECRET, process.env.SPOTIFY_REFRESH_TOKEN)
 
 const router = express.Router()
@@ -28,3 +28,5 @@ router.post('/', async (req, res, next) => {
         }
     }
 })
+
+module.exports = router
