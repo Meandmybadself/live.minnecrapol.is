@@ -23,6 +23,8 @@ class SpotifyClient {
 
     async addToQueueWithURI(uri) {
         // https://developer.spotify.com/documentation/web-api/reference/#/operations/add-to-queue
+        // https://developer.spotify.com/console/post-queue/
+        uri = encodeURIComponent(uri);
         const url = `https://api.spotify.com/v1/me/player/queue?uri=${uri}`;
         const response = await this._makeSpotifyRequest(url, 'POST');
         return response;
@@ -84,28 +86,35 @@ class SpotifyClient {
     }
 
     // Make Spotify API request with authentication token.
-    async _makeSpotifyRequest(url, method = 'GET') {
+    async _makeSpotifyRequest(url, method = 'GET', data) {
         if (!this._token) {
             await this._getSpotifyToken();
         }
 
-        console.log(method, url);
+        console.log(method, url, data)
 
         try {
-            const response = await fetch(url, {
+            const responseOpts = {
                 method,
                 headers: {
                     Authorization: `Bearer ${this._token}`,
-                    Accept: 'application/json',
+                    "Accept": "*/*",
+                    "Accept-Language": "en-US,en;q=0.5",
                     'Content-Type': 'application/json'
                 }
-            });
+            }
+            if (method !== 'GET' && data) {
+                responseOpts.body = JSON.stringify(data);
+            }
+
+            const response = await fetch(url, responseOpts);
             if (!response.ok) {
+                console.error('Spotify response: ', response);
                 throw new Error(`${response.status} - ${response.statusText}`);
             }
-            const data = await response.json();
-            console.log('Spotify response: ', data);
-            return data;
+            const responseData = await response.json();
+            console.log('Spotify response: ', responseData);
+            return responseData;
         } catch (e) {
             console.error('Error making Spotify request: ', e);
         }
