@@ -12,7 +12,7 @@ fs.emptyDirSync(path.resolve(__dirname, '../media/live/stream'))
 require('./utilities/nms')
 
 // MongoDB
-mongoose.set('useFindAndModify', false)
+mongoose.set('strictQuery', true);
 mongoose.connect(process.env.MINNE_LIVE_MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 // Express Server
