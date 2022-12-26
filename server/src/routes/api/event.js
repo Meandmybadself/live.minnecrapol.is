@@ -1,6 +1,8 @@
 const express = require('express')
 const SpotifyClient = require('../../utilities/spotify')
 const spotifyClient = new SpotifyClient(process.env.SPOTIFY_CLIENT_ID, process.env.SPOTIFY_CLIENT_SECRET, process.env.SPOTIFY_REFRESH_TOKEN)
+const AudioService = require('../../utilities/audio')
+const audioClient = new AudioService(process.env.STREAM_URL)
 
 const router = express.Router()
 
@@ -18,6 +20,12 @@ router.post('/', async (req, res, next) => {
             // Parse open spotify urls and add them to the queue.
             const spotifyUrls = event.text.match(/https:\/\/open\.spotify\.com\/track\/[a-zA-Z0-9]+/g)
             if (spotifyUrls) {
+                // Start the playback if it's not already started.
+                const isPlaying = audioClient.isPlaying()
+                if (!isPlaying) {
+                    await audioClient.play()
+                }
+
                 // Add the songs to the queue.
                 const songs = await Promise.all(spotifyUrls.map(async (url) => {
                     const response = await spotifyClient.addToQueueWithURL(url)

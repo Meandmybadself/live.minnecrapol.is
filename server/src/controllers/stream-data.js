@@ -16,7 +16,7 @@ const playStreamUrl = !MINNE_LIVE_PLAY_NEEDS_PORT ?
 const streamFilesReady = async () => {
   let ready = false
 
-  ready = await new Promise(resolve =>{
+  ready = await new Promise(resolve => {
     fs.stat(path.resolve(__dirname, '../../media/live/stream/index.mpd'), (error, stats) => {
       resolve(!error)
     })
@@ -50,7 +50,7 @@ const streamDataForStreamKey = async (streamKey) => {
 
 exports.getStreamDataForUser = async (user, forceRenew = false) => {
   const existingKey = await StreamKey.findOne({ user: user._id })
-  
+
   if (existingKey) {
     if (forceRenew || existingKey.expires <= new Date()) {
       // Expired key, delete
@@ -62,8 +62,8 @@ exports.getStreamDataForUser = async (user, forceRenew = false) => {
   }
 
   const expires = new Date()
-  expires.setDate(expires.getDate() + 1)
-  
+  expires.setDate(expires.getDate() + 7) // one week.
+
   const expiresSeconds = Math.floor(expires.getTime() / 1000)
   const hashData = `/live/${MINNE_LIVE_STREAM_KEY}-${expiresSeconds}-${MINNE_LIVE_AUTH_SECRET}`
   const hash = crypto.createHash('md5').update(hashData).digest('hex')

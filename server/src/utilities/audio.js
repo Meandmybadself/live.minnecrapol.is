@@ -8,6 +8,10 @@ class AudioService {
         this._streamUrl = streamUrl;
     }
 
+    isPlaying() {
+        return this._ffmpegProcess !== undefined;
+    }
+
     start() {
         this._ffmpegProcess = spawn('ffmpeg', [
             '-f', 'alsa',

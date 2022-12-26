@@ -12,7 +12,7 @@ exports.signInWithSlack = async (code, redirect_uri) => {
   })
 
   const userInfoResponse = await SlackBotWebClient.users.info({ user: oAuthResponse.authed_user.id })
-  
+
   const { id: user_id, team_id, profile } = userInfoResponse.user
 
   const userData = {
