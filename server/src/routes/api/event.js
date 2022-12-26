@@ -23,7 +23,7 @@ router.post('/', async (req, res, next) => {
                 // Start the playback if it's not already started.
                 const isPlaying = audioClient.isPlaying()
                 if (!isPlaying) {
-                    await audioClient.play()
+                    await audioClient.start()
                 }
 
                 // Add the songs to the queue.
