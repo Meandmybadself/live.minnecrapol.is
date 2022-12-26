@@ -23,7 +23,9 @@ router.post('/', async (req, res, next) => {
                 // Start the playback if it's not already started.
                 const isPlaying = audioClient.isPlaying()
                 if (!isPlaying) {
-                    await audioClient.play()
+                    console.log('Starting system playback.')
+                    audioClient.start()
+                    await spotifyClient.startPlayback()
                 }
 
                 // Add the songs to the queue.

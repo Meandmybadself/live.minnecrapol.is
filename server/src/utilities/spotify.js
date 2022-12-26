@@ -10,6 +10,14 @@ class SpotifyClient {
         this._refreshToken = refreshToken;
     }
 
+    async getAvailableDevices() {
+        // https://developer.spotify.com/documentation/web-api/reference/#/operations/get-a-users-available-devices
+        const url = 'https://api.spotify.com/v1/me/player/devices';
+        const response = await this._makeSpotifyRequest(url, 'GET');
+        this._device = response.devices[0].id;
+        return response;
+    }
+
     async addToQueueWithURL(url) {
         const trackIdRegex = /https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]+)/;
         const trackId = url.match(trackIdRegex)?.[1];
@@ -25,7 +33,7 @@ class SpotifyClient {
         // https://developer.spotify.com/documentation/web-api/reference/#/operations/add-to-queue
         // https://developer.spotify.com/console/post-queue/
         uri = encodeURIComponent(uri);
-        const url = `https://api.spotify.com/v1/me/player/queue?uri=${uri}`;
+        const url = `https://api.spotify.com/v1/me/player/queue?uri=${uri}&device_id=${this._device}`;
         const response = await this._makeSpotifyRequest(url, 'POST');
         return response;
     }
@@ -39,7 +47,7 @@ class SpotifyClient {
 
     async startPlayback() {
         // https://developer.spotify.com/documentation/web  -api/reference/#/operations/start-a-users-playback
-        const url = 'https://api.spotify.com/v1/me/player/play';
+        const url = 'https://api.spotify.com/v1/me/player/play&device_id=${this._device}';
         const response = await this._makeSpotifyRequest(url, 'PUT');
         return response;
     }
