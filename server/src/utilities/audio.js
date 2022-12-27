@@ -30,6 +30,8 @@ class AudioService {
         this._ffmpegProcess.on('close', (code) => {
             console.log(`child process exited with code ${code}`);
         });
+
+        process.on('exit', function () { this_ffmpegProcess.kill() })
     }
 
     stop() {
