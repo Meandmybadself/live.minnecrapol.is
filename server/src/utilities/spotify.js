@@ -114,7 +114,7 @@ class SpotifyClient {
     // Make Spotify API request with authentication token.
     async _makeSpotifyRequest(url, method = 'GET', data) {
         if (!this._token) {
-            await this._getSpotifyToken();
+            await potifyToken();
         }
 
         console.log(method, url, data)
