@@ -1,3 +1,5 @@
+
+
 class SpotifyClient {
     _token;
     _clientId;
@@ -29,15 +31,21 @@ class SpotifyClient {
         return response;
     }
 
-    async addToQueueWithURL(url) {
+    spotifyURLtoURI(url) {
         const trackIdRegex = /https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]+)/;
         const trackId = url.match(trackIdRegex)?.[1];
         if (!trackId) {
             console.error('Invalid Spotify track URL: ', url);
             return false
         }
-        const uri = `spotify:track:${trackId}`;
-        return this.addToQueueWithURI(uri);
+        return `spotify:track:${trackId}`;
+    }
+
+    async addToQueueWithURL(url) {
+        const uri = this.spotifyURLtoURI(url)
+        if (uri) {
+            return this.addToQueueWithURI(uri);
+        }
     }
 
     async addToQueueWithURI(uri) {
@@ -62,15 +70,17 @@ class SpotifyClient {
         return response;
     }
 
-    async startPlayback() {
+    async startPlayback(uris) {
         // If we don't have a device ID, let's get one.
         if (!this._device) {
             await this._getDeviceId()
         }
-
-        // https://developer.spotify.com/documentation/web  -api/reference/#/operations/start-a-users-playback
+        console.log('startPlayback', JSON.stringify(uris, null, 2))
+        // https://developer.spotify.com/documentation/web-api/reference/#/operations/start-a-users-playback
         const url = `https://api.spotify.com/v1/me/player/play`
-        const response = await this._makeSpotifyRequest(url, 'PUT', {});
+        const response = await this._makeSpotifyRequest(url, 'PUT', {
+            uris
+        });
         return response;
     }
 
@@ -145,10 +155,17 @@ class SpotifyClient {
             let responseData
             try {
                 responseData = await response.json();
-                console.log('Spotify response: ', responseData);
-
+                // console.log('Spotify response: ', responseData);
             } catch (e) {
-                responseData = await response.body()
+                if (response.body instanceof Function) {
+                    responseData = await response.body()
+                    console.log('BODY', responseData)
+                } else if (response.body instanceof Function) {
+                    responseData = await response.error()
+                    console.log('ERROR', responseData)
+                } else {
+                    console.log('Unknown response in _makeSpotifyRequest', responseData)
+                }
             }
             return responseData;
 

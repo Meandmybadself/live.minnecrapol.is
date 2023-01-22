@@ -27,19 +27,21 @@ router.post('/', async (req, res, next) => {
                 if (!isPlaying) {
                     console.log('Starting system playback.')
                     audioClient.start()
-                    console.log('Starting spotify playback')
-                    await spotifyClient.startPlayback()
+                    // Get the URI from the URL & start playback.
+                    const uris = spotifyUrls.map(url => spotifyClient.spotifyURLtoURI(url))
+                    await spotifyClient.startPlayback(uris)
+                } else {
+                    // Add the songs to the already-playing queue.
+                    const songs = await Promise.all(spotifyUrls.map(async (url) => {
+                        const response = await spotifyClient.addToQueueWithURL(url)
+                        return response
+                    }))
+                    console.log(`Enqueuing ${songs.length} to queue.`)
+                    // TODO - Begin polling the state of the queue
+                    pollQueueId = setTimeout(checkQueue, 5000)
                 }
 
-                // Add the songs to the queue.
-                const songs = await Promise.all(spotifyUrls.map(async (url) => {
-                    const response = await spotifyClient.addToQueueWithURL(url)
-                    return response
-                }))
-                console.log(`Adding ${songs.length} to queue.`)
-                console.log(songs)
-                // TODO - Begin polling the state of the queue
-                pollQueueId = setTimeout(checkQueue, 5000)
+
             }
         }
     }
@@ -48,6 +50,7 @@ router.post('/', async (req, res, next) => {
 checkQueue = async () => {
     const queue = await spotifyClient.getQueue()
     console.log('queue', queue)
+    // TODO: If queue is empty, stop playback / stop rtmp service.
     pollQueueId = setTimeout(checkQueue, 5000)
 }
 
