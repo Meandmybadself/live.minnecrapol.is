@@ -6,6 +6,8 @@ const audioClient = new AudioService(process.env.STREAM_URL)
 
 const router = express.Router()
 
+let pollQueueId
+
 router.post('/', async (req, res, next) => {
     // This is a Slack event.
     const { body } = req
@@ -25,6 +27,7 @@ router.post('/', async (req, res, next) => {
                 if (!isPlaying) {
                     console.log('Starting system playback.')
                     audioClient.start()
+                    console.log('Starting spotify playback')
                     await spotifyClient.startPlayback()
                 }
 
@@ -33,10 +36,19 @@ router.post('/', async (req, res, next) => {
                     const response = await spotifyClient.addToQueueWithURL(url)
                     return response
                 }))
+                console.log(`Adding ${songs.length} to queue.`)
                 console.log(songs)
+                // TODO - Begin polling the state of the queue
+                pollQueueId = setTimeout(checkQueue, 5000)
             }
         }
     }
 })
+
+checkQueue = async () => {
+    const queue = await spotifyClient.getQueue()
+    console.log('queue', queue)
+    pollQueueId = setTimeout(checkQueue, 5000)
+}
 
 module.exports = router

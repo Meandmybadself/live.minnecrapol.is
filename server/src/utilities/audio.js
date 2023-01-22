@@ -25,7 +25,7 @@ class AudioService {
             console.log(`stdout: ${data}`);
         });
         this._ffmpegProcess.stderr.on('data', (data) => {
-            console.error(`stderr: ${data}`);
+            // console.error(`stderr: ${data}`);
         });
         this._ffmpegProcess.on('close', (code) => {
             console.log(`child process exited with code ${code}`);

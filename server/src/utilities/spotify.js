@@ -3,6 +3,7 @@ class SpotifyClient {
     _clientId;
     _clientSecret;
     _refreshToken;
+    _deviceId;
 
     constructor(clientId, clientSecret, refreshToken) {
         this._clientId = clientId;
@@ -10,11 +11,13 @@ class SpotifyClient {
         this._refreshToken = refreshToken;
     }
 
-    async getAvailableDevices() {
+    async getDeviceId() {
+        console.log('Getting device id')
         // https://developer.spotify.com/documentation/web-api/reference/#/operations/get-a-users-available-devices
         const url = 'https://api.spotify.com/v1/me/player/devices';
         const response = await this._makeSpotifyRequest(url, 'GET');
-        this._device = response.devices[0].id;
+        this._deviceId = response.devices.find(device => device.name === 'minnecrapolis').id
+        console.log('Device id set to:', this._deviceId)
         return response;
     }
 
@@ -32,8 +35,16 @@ class SpotifyClient {
     async addToQueueWithURI(uri) {
         // https://developer.spotify.com/documentation/web-api/reference/#/operations/add-to-queue
         // https://developer.spotify.com/console/post-queue/
+
+
+        // If we don't have a device ID, let's get one.
+        if (!this._device) {
+            await this.getDeviceId()
+        }
+
         uri = encodeURIComponent(uri);
-        const url = `https://api.spotify.com/v1/me/player/queue?uri=${uri}&device_id=${this._device}`;
+        // const url = `https://api.spotify.com/v1/me/player/queue?uri=${uri}&device_id=${this._deviceId}`;
+        const url = `https://api.spotify.com/v1/me/player/queue?uri=${uri}`
         const response = await this._makeSpotifyRequest(url, 'POST');
         return response;
     }
@@ -46,8 +57,15 @@ class SpotifyClient {
     }
 
     async startPlayback() {
+        console.log('startPlayback')
+
+        // If we don't have a device ID, let's get one.
+        if (!this._device) {
+            await this.getDeviceId()
+        }
+
         // https://developer.spotify.com/documentation/web  -api/reference/#/operations/start-a-users-playback
-        const url = 'https://api.spotify.com/v1/me/player/play&device_id=${this._device}';
+        const url = `https://api.spotify.com/v1/me/player/play&device_id=${this._deviceId}`
         const response = await this._makeSpotifyRequest(url, 'PUT');
         return response;
     }
