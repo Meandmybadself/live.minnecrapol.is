@@ -15,12 +15,18 @@ class AudioService {
     start() {
         this._ffmpegProcess = spawn('ffmpeg', [
             '-f', 'alsa',
-            '-i', 'hw:0,0',
-            '-acodec', 'aac',
-            '-ac', '1',
+            '-c:a', 'pcm_s32le',
+            '-channels', '2',
+            '-sample_rate', '48000',
+            '-i', 'hw:0,1',
+            '-f', 'lavfi',
+            '-i', 'color=c=blue:s=640x480:r=15',
+            '-c:v', 'libx264',
+            '-c:a', 'aac',
             '-f', 'flv',
             this._streamUrl
         ]);
+
         this._ffmpegProcess.stdout.on('data', (data) => {
             console.log(`stdout: ${data}`);
         });

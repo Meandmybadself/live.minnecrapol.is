@@ -1,7 +1,7 @@
 const express = require('express')
 const SpotifyClient = require('../../utilities/spotify')
 const spotifyClient = new SpotifyClient(process.env.SPOTIFY_CLIENT_ID, process.env.SPOTIFY_CLIENT_SECRET, process.env.SPOTIFY_REFRESH_TOKEN)
-const AudioService = require('../../utilities/audio')
+const AudioService = require('../../utilities/ffmpeg')
 const audioClient = new AudioService(process.env.STREAM_URL)
 
 const router = express.Router()
