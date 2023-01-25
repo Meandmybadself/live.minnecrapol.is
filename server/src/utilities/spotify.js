@@ -1,3 +1,5 @@
+
+
 class SpotifyClient {
     _token;
     _clientId;
@@ -11,40 +13,52 @@ class SpotifyClient {
         this._refreshToken = refreshToken;
     }
 
-    async getDeviceId() {
+    async _getDeviceId() {
         console.log('Getting device id')
         // https://developer.spotify.com/documentation/web-api/reference/#/operations/get-a-users-available-devices
         const url = 'https://api.spotify.com/v1/me/player/devices';
         const response = await this._makeSpotifyRequest(url, 'GET');
-        this._deviceId = response.devices.find(device => device.name === 'minnecrapolis').id
+        if (!response.devices?.length) {
+            console.error(`No available Spotify devices to broadcast to`)
+            process.exit(1)
+        }
+        this._deviceId = response.devices.find(device => device.name === 'minnecrapolis')?.id
+        if (!this._deviceId) {
+            console.error(`Could not find minnecrapolis spotify daemon.`)
+            process.exit(1)
+        }
         console.log('Device id set to:', this._deviceId)
         return response;
     }
 
-    async addToQueueWithURL(url) {
+    spotifyURLtoURI(url) {
         const trackIdRegex = /https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]+)/;
         const trackId = url.match(trackIdRegex)?.[1];
         if (!trackId) {
             console.error('Invalid Spotify track URL: ', url);
             return false
         }
-        const uri = `spotify:track:${trackId}`;
-        return this.addToQueueWithURI(uri);
+        return `spotify:track:${trackId}`;
+    }
+
+    async addToQueueWithURL(url) {
+        const uri = this.spotifyURLtoURI(url)
+        if (uri) {
+            return this.addToQueueWithURI(uri);
+        }
     }
 
     async addToQueueWithURI(uri) {
         // https://developer.spotify.com/documentation/web-api/reference/#/operations/add-to-queue
         // https://developer.spotify.com/console/post-queue/
 
-
         // If we don't have a device ID, let's get one.
         if (!this._device) {
-            await this.getDeviceId()
+            await this._getDeviceId()
         }
 
         uri = encodeURIComponent(uri);
-        // const url = `https://api.spotify.com/v1/me/player/queue?uri=${uri}&device_id=${this._deviceId}`;
-        const url = `https://api.spotify.com/v1/me/player/queue?uri=${uri}`
+        const url = `https://api.spotify.com/v1/me/player/queue?uri=${uri}&device_id=${this._deviceId}`;
         const response = await this._makeSpotifyRequest(url, 'POST');
         return response;
     }
@@ -56,17 +70,17 @@ class SpotifyClient {
         return response;
     }
 
-    async startPlayback() {
-        console.log('startPlayback')
-
+    async startPlayback(uris) {
         // If we don't have a device ID, let's get one.
         if (!this._device) {
-            await this.getDeviceId()
+            await this._getDeviceId()
         }
-
-        // https://developer.spotify.com/documentation/web  -api/reference/#/operations/start-a-users-playback
-        const url = `https://api.spotify.com/v1/me/player/play&device_id=${this._deviceId}`
-        const response = await this._makeSpotifyRequest(url, 'PUT');
+        console.log('startPlayback', JSON.stringify(uris, null, 2))
+        // https://developer.spotify.com/documentation/web-api/reference/#/operations/start-a-users-playback
+        const url = `https://api.spotify.com/v1/me/player/play`
+        const response = await this._makeSpotifyRequest(url, 'PUT', {
+            uris
+        });
         return response;
     }
 
@@ -114,7 +128,7 @@ class SpotifyClient {
     // Make Spotify API request with authentication token.
     async _makeSpotifyRequest(url, method = 'GET', data) {
         if (!this._token) {
-            await potifyToken();
+            await this._getSpotifyToken()
         }
 
         console.log(method, url, data)
@@ -138,9 +152,23 @@ class SpotifyClient {
                 console.error('Spotify response: ', response);
                 throw new Error(`${response.status} - ${response.statusText}`);
             }
-            const responseData = await response.json();
-            console.log('Spotify response: ', responseData);
+            let responseData
+            try {
+                responseData = await response.json();
+                // console.log('Spotify response: ', responseData);
+            } catch (e) {
+                if (response.body instanceof Function) {
+                    responseData = await response.body()
+                    console.log('BODY', responseData)
+                } else if (response.body instanceof Function) {
+                    responseData = await response.error()
+                    console.log('ERROR', responseData)
+                } else {
+                    console.log('Unknown response in _makeSpotifyRequest', responseData)
+                }
+            }
             return responseData;
+
         } catch (e) {
             console.error('Error making Spotify request: ', e);
         }
